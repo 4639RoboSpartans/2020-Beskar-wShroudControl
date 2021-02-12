@@ -6,9 +6,9 @@
 /*----------------------------------------------------------------------------*/
 package frc.robot.subsystems;
 
-import frc.robot.Constants;
-
 import edu.wpi.first.wpilibj.controller.PIDController;
+
+import frc.robot.Constants;
 
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -27,7 +27,7 @@ public class ShroudSys extends SubsystemBase {
 		shroud.setNeutralMode(NeutralMode.Brake);
 		shroud.setInverted(InvertType.InvertMotorOutput);
 
-		//PID Initialization
+		// PID Initialization
 		this.pid = new PIDController(Constants.SHROUD_KP, Constants.SHROUD_KI, 0);
 		pid.setTolerance(10);
 	}
@@ -36,27 +36,21 @@ public class ShroudSys extends SubsystemBase {
 		return shroud.getSelectedSensorPosition();
 	}
 
-	public void setDesiredPosition(double position)
-	{
+	public void setDesiredPosition(double position) {
 		positionDesired = position;
 	}
-
 
 	public void setShroud(double power) {
 		shroud.set(power);
 	}
 
-	
-
 	@Override
 	public void periodic() {
-		if(pid.atSetpoint())
-		{
+		if (pid.atSetpoint()) {
 			pid.reset();
 			shroud.set(0);
-		}
-		else{
-			shroud.set(pid.calculate(getDegrees(),positionDesired));
+		} else {
+			shroud.set(pid.calculate(getDegrees(), positionDesired));
 		}
 	}
 }
