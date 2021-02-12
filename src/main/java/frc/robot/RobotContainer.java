@@ -148,8 +148,8 @@ public class RobotContainer {
 	 */
 	private void configureButtonBindings() {
 		// Toggle Shroud Presets
-		m_oi.getPovButton(1, 270).whenPressed(() -> m_shroud.setDesiredPosition(goUp()), m_shroud);
-		m_oi.getPovButton(1, 90).whenPressed(() -> m_shroud.setDesiredPosition(goDown()), m_shroud);
+		m_oi.getPovButton(1, 270).whenPressed(new InstantCommand(() -> m_shroud.setDesiredPosition(goUp()), m_shroud));
+		m_oi.getPovButton(1, 90).whenPressed(new InstantCommand(() -> m_shroud.setDesiredPosition(goDown()), m_shroud));
 
 		// Bring intake up
 		m_oi.getPovButton(1, 0)
