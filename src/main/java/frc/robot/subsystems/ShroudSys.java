@@ -8,6 +8,8 @@ package frc.robot.subsystems;
 
 import frc.robot.Constants;
 
+import edu.wpi.first.wpilibj.controller.PIDController;
+
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -16,23 +18,45 @@ import command.SubsystemBase;
 
 public class ShroudSys extends SubsystemBase {
 	private final WPI_TalonSRX shroud;
+	private final PIDController pid;
+	private double positionDesired;
 
 	public ShroudSys() {
 		this.shroud = new WPI_TalonSRX(Constants.SHROUD_CAN);
 		shroud.configFactoryDefault();
 		shroud.setNeutralMode(NeutralMode.Brake);
 		shroud.setInverted(InvertType.InvertMotorOutput);
-	}
 
-	public void setShroud(double power) {
-		shroud.set(power);
+		//PID Initialization
+		this.pid = new PIDController(Constants.SHROUD_KP, Constants.SHROUD_KI, 0);
+		pid.setTolerance(10);
 	}
 
 	public double getDegrees() {
 		return shroud.getSelectedSensorPosition();
 	}
 
+	public void setDesiredPosition(double position)
+	{
+		positionDesired = position;
+	}
+
+
+	public void setShroud(double power) {
+		shroud.set(power);
+	}
+
+	
+
 	@Override
 	public void periodic() {
+		if(pid.atSetpoint())
+		{
+			pid.reset();
+			shroud.set(0);
+		}
+		else{
+			shroud.set(pid.calculate(getDegrees(),positionDesired));
+		}
 	}
 }

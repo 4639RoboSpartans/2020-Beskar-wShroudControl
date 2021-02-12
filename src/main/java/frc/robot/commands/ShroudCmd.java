@@ -7,7 +7,7 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.ShroudSys;
-
+import frc.robot.Constants;
 import command.CommandBase;
 
 public class ShroudCmd extends CommandBase {
@@ -22,6 +22,20 @@ public class ShroudCmd extends CommandBase {
 	public void initialize() {
 		shroud.setShroud(0.3);
 	}
+
+	public void setDesiredPosition(int pos)
+	{
+		if(pos == 0)
+			shroud.setDesiredPosition(Constants.SHROUD_PRESET_0);
+		else if(pos == 1)
+			shroud.setDesiredPosition(Constants.SHROUD_PRESET_1);
+		else if(pos == 2)
+			shroud.setDesiredPosition(Constants.SHROUD_PRESET_2);
+		else if(pos == 3)
+			shroud.setDesiredPosition(Constants.SHROUD_PRESET_3);
+	}
+
+
 
 	@Override
 	public void end(boolean interrupted) {

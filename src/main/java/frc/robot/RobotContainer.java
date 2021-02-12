@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.ManualDriveCmd;
 import frc.robot.commands.PushBallsCmd;
 import frc.robot.commands.SpoolShooterCmd;
@@ -27,6 +27,7 @@ import frc.robot.subsystems.ShroudSys;
 import frc.robot.subsystems.TurretSys;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import edu.wpi.first.wpilibj.Encoder;
 
 import command.Command;
 import command.ExecuteEndCommand;
@@ -53,6 +54,9 @@ public class RobotContainer {
 
 	private final OI m_oi;
 	private final Compressor m_compressor;
+
+	private int shroudPos = 0;
+	public Encoder encoder1 = new Encoder(1,2,3);
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -110,7 +114,37 @@ public class RobotContainer {
 				new ExecuteEndCommand(() -> m_shroud.setShroud(m_oi.getAxis(1, Constants.Axes.RIGHT_STICK_Y) * 0.3),
 						() -> m_shroud.setShroud(0), m_shroud));
 		configureButtonBindings();
+		updateDisplay();
 	}
+
+	private void updateDisplay()
+	{
+		SmartDashboard.putString("DB/String 0", "Shroud Position: " + shroudPos);
+	}
+
+	//if the shroud is set to a position less than 3, then this will increase the
+	//  position value by 1, and then return that position.
+	private int goDown()
+	{
+		if(shroudPos < 3)
+		{
+			return shroudPos++;
+		}
+		else return shroudPos;
+	}
+
+	//if the shroud is set to a position less than 4, then this will increase the
+	//  position value by 1, and then return that position.
+	private int goUp()
+	{
+		if(shroudPos > 0)
+		{
+			return shroudPos--;
+		}
+		else return shroudPos;
+	}
+
+
 
 	/**
 	 * Use this method to define your button->command mappings. Buttons can be
@@ -119,6 +153,10 @@ public class RobotContainer {
 	 * passing it to a {@link command.button.JoystickButton}.
 	 */
 	private void configureButtonBindings() {
+		//Toggle Shroud Presets
+		m_oi.getPovButton(1,270).whenPressed(() -> m_shroud.setDesiredPosition(goUp()),m_shroud);
+		m_oi.getPovButton(1,90).whenPressed(() -> m_shroud.setDesiredPosition(goDown()),m_shroud);
+		
 		// Bring intake up
 		m_oi.getPovButton(1, 0)
 				.whileHeld(new ExecuteEndCommand(() -> m_intake.setPivot(0.7), () -> m_intake.setPivot(0), m_intake));
