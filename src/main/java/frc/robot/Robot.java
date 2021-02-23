@@ -60,7 +60,6 @@ public class Robot extends TimedRobot {
 		// block in order for anything in the Command-based framework to work.
 		CommandScheduler.getInstance().run();
 		EncoderVal = m_robotContainer.encoder1.getDistance();
-		System.out.println(EncoderVal);
 	}
 
 	/**

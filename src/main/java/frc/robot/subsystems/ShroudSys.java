@@ -7,6 +7,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.Constants;
 
@@ -20,6 +21,7 @@ public class ShroudSys extends SubsystemBase {
 	private final WPI_TalonSRX shroud;
 	private final PIDController pid;
 	private double positionDesired;
+	private double pidOut;
 
 	public ShroudSys() {
 		this.shroud = new WPI_TalonSRX(Constants.SHROUD_CAN);
@@ -29,15 +31,28 @@ public class ShroudSys extends SubsystemBase {
 
 		// PID Initialization
 		this.pid = new PIDController(Constants.SHROUD_KP, Constants.SHROUD_KI, 0);
+		this.pid.setSetpoint(0);
 		pid.setTolerance(10);
+		SmartDashboard.putNumber("P", Constants.SHROUD_KP);
+		SmartDashboard.putNumber("I", Constants.SHROUD_KI);
+		SmartDashboard.putNumber("D", 0);
 	}
 
 	public double getDegrees() {
 		return shroud.getSelectedSensorPosition();
 	}
 
-	public void setDesiredPosition(double position) {
-		positionDesired = position;
+	public void setDesiredPosition(double pos) {
+		if (pos == 0)
+			positionDesired = Constants.SHROUD_PRESET_0;
+		else if (pos == 1)
+			positionDesired = Constants.SHROUD_PRESET_1;
+		else if (pos == 2)
+			positionDesired = Constants.SHROUD_PRESET_2;
+		else if (pos == 3)
+			positionDesired = Constants.SHROUD_PRESET_3;
+
+		SmartDashboard.putString("DB/String 0", "DesPos: " + positionDesired);
 	}
 
 	public void setShroud(double power) {
@@ -46,11 +61,20 @@ public class ShroudSys extends SubsystemBase {
 
 	@Override
 	public void periodic() {
-		if (pid.atSetpoint()) {
-			pid.reset();
-			shroud.set(0);
-		} else {
-			shroud.set(pid.calculate(getDegrees(), positionDesired));
-		}
+		pidOut = pid.calculate(getDegrees(), positionDesired);
+
+		pid.setPID(SmartDashboard.getNumber("P", 0), SmartDashboard.getNumber("I", 0),
+				SmartDashboard.getNumber("D", 0));
+		SmartDashboard.putString("DB/String 6", "ShroudPeriodic " + getDegrees());
+		SmartDashboard.putString("DB/String 7", "Setpoint: " + pid.atSetpoint());
+		SmartDashboard.putString("DB/String 8", "PidOut: " + pidOut);
+		// if (pid.atSetpoint()) {
+		// pid.reset();
+		// shroud.set(0);
+		// }
+		shroud.set(pidOut);
+		// SmartDashboard.putNumber("PID: ", pid.calculate(getDegrees(),
+		// positionDesired));
+
 	}
 }

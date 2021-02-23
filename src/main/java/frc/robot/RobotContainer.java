@@ -115,29 +115,26 @@ public class RobotContainer {
 				new ExecuteEndCommand(() -> m_shroud.setShroud(m_oi.getAxis(1, Constants.Axes.RIGHT_STICK_Y) * 0.3),
 						() -> m_shroud.setShroud(0), m_shroud));
 		configureButtonBindings();
-		updateDisplay();
-	}
-
-	private void updateDisplay() {
-		SmartDashboard.putString("DB/String 0", "Shroud Position: " + shroudPos);
 	}
 
 	// if the shroud is set to a position less than 3, then this will increase the
 	// position value by 1, and then return that position.
 	private int goDown() {
+		SmartDashboard.putString("DB/String 5", "GoUp: True");
 		if (shroudPos < 3) {
-			return shroudPos++;
+			return this.shroudPos++;
 		} else
-			return shroudPos;
+			return this.shroudPos;
 	}
 
 	// if the shroud is set to a position less than 4, then this will increase the
 	// position value by 1, and then return that position.
 	private int goUp() {
+		SmartDashboard.putString("DB/String 5", "GoDown: True");
 		if (shroudPos > 0) {
-			return shroudPos--;
+			return this.shroudPos--;
 		} else
-			return shroudPos;
+			return this.shroudPos;
 	}
 
 	/**
@@ -151,6 +148,10 @@ public class RobotContainer {
 		m_oi.getPovButton(1, 270).whenPressed(new InstantCommand(() -> m_shroud.setDesiredPosition(goUp()), m_shroud));
 		m_oi.getPovButton(1, 90).whenPressed(new InstantCommand(() -> m_shroud.setDesiredPosition(goDown()), m_shroud));
 
+		SmartDashboard.putString("DB/String 1", "RightPOV: " + m_oi.getPovButton(1, 90).get());
+		SmartDashboard.putString("DB/String 2", "LeftPOV: " + m_oi.getPovButton(1, 270).get());
+		SmartDashboard.putString("DB/String 3", "UpPOV:" + m_oi.getPovButton(1, 0).get());
+		SmartDashboard.putString("DB/String 4", "DownPOV:" + m_oi.getPovButton(1, 180).get());
 		// Bring intake up
 		m_oi.getPovButton(1, 0)
 				.whileHeld(new ExecuteEndCommand(() -> m_intake.setPivot(0.7), () -> m_intake.setPivot(0), m_intake));
