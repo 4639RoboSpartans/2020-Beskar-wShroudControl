@@ -33,7 +33,15 @@ public final class Constants {
 	public static final int FRONT_RIGHT_DRIVE_CAN = 3;
 	public static final int BACK_RIGHT_DRIVE_CAN = 4;
 
+	// SHROUD CONSTANTS
 	public static final int SHROUD_CAN = 10; // the CAN 10 was rassigned to the Shroud.
+	public static final double SHROUD_KP = 1.5;
+	public static final double SHROUD_KI = 0.0;
+	public static final double SHROUD_PRESET_0 = 0.0;
+	public static final double SHROUD_PRESET_1 = 250.0;
+	public static final double SHROUD_PRESET_2 = 500.0;
+	public static final double SHROUD_PRESET_3 = 750.0;
+
 	public static final int TURRET_CAN = 7;
 	public static final int TOP_SHOOTER_CAN = 8;
 	public static final int BOTTOM_SHOOTER_CAN = 9;

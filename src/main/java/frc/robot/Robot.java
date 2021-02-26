@@ -23,7 +23,7 @@ import command.CommandScheduler;
  */
 public class Robot extends TimedRobot {
 	private Command m_autonomousCommand;
-
+	private double EncoderVal;
 	private RobotContainer m_robotContainer;
 
 	/**
@@ -59,6 +59,7 @@ public class Robot extends TimedRobot {
 		// robot's periodic
 		// block in order for anything in the Command-based framework to work.
 		CommandScheduler.getInstance().run();
+		EncoderVal = m_robotContainer.encoder1.getDistance();
 	}
 
 	/**
@@ -112,6 +113,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+
 	}
 
 	@Override

@@ -10,8 +10,10 @@ import static frc.robot.Constants.Buttons;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.commands.ManualDriveCmd;
 import frc.robot.commands.PushBallsCmd;
@@ -53,6 +55,9 @@ public class RobotContainer {
 
 	private final OI m_oi;
 	private final Compressor m_compressor;
+
+	private int shroudPos = 0;
+	public Encoder encoder1 = new Encoder(1, 2, 3);
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -106,10 +111,31 @@ public class RobotContainer {
 						() -> m_turret.setTurret(0), m_turret));
 
 		m_shroud = new ShroudSys();
-		m_shroud.setDefaultCommand(
-				new ExecuteEndCommand(() -> m_shroud.setShroud(m_oi.getAxis(1, Constants.Axes.RIGHT_STICK_Y) * 0.3),
-						() -> m_shroud.setShroud(0), m_shroud));
+		// m_shroud.setDefaultCommand(
+		// new ExecuteEndCommand(() -> m_shroud.setShroud(m_oi.getAxis(1,
+		// Constants.Axes.RIGHT_STICK_Y) * 0.3),
+		// () -> m_shroud.setShroud(0), m_shroud));
 		configureButtonBindings();
+	}
+
+	// if the shroud is set to a position less than 3, then this will increase the
+	// position value by 1, and then return that position.
+	private int goDown() {
+		SmartDashboard.putString("DB/String 5", "GoUp: True");
+		if (shroudPos < 3) {
+			return ++this.shroudPos;
+		} else
+			return this.shroudPos;
+	}
+
+	// if the shroud is set to a position less than 4, then this will increase the
+	// position value by 1, and then return that position.
+	private int goUp() {
+		SmartDashboard.putString("DB/String 5", "GoDown: True");
+		if (shroudPos > 0) {
+			return --this.shroudPos;
+		} else
+			return this.shroudPos;
 	}
 
 	/**
@@ -119,6 +145,14 @@ public class RobotContainer {
 	 * passing it to a {@link command.button.JoystickButton}.
 	 */
 	private void configureButtonBindings() {
+		// Toggle Shroud Presets
+		m_oi.getPovButton(1, 270).whenPressed(new InstantCommand(() -> m_shroud.setDesiredPosition(goUp()), m_shroud));
+		m_oi.getPovButton(1, 90).whenPressed(new InstantCommand(() -> m_shroud.setDesiredPosition(goDown()), m_shroud));
+
+		SmartDashboard.putString("DB/String 1", "RightPOV: " + m_oi.getPovButton(1, 90).get());
+		SmartDashboard.putString("DB/String 2", "LeftPOV: " + m_oi.getPovButton(1, 270).get());
+		SmartDashboard.putString("DB/String 3", "UpPOV:" + m_oi.getPovButton(1, 0).get());
+		SmartDashboard.putString("DB/String 4", "DownPOV:" + m_oi.getPovButton(1, 180).get());
 		// Bring intake up
 		m_oi.getPovButton(1, 0)
 				.whileHeld(new ExecuteEndCommand(() -> m_intake.setPivot(0.7), () -> m_intake.setPivot(0), m_intake));
