@@ -111,9 +111,10 @@ public class RobotContainer {
 						() -> m_turret.setTurret(0), m_turret));
 
 		m_shroud = new ShroudSys();
-		m_shroud.setDefaultCommand(
-				new ExecuteEndCommand(() -> m_shroud.setShroud(m_oi.getAxis(1, Constants.Axes.RIGHT_STICK_Y) * 0.3),
-						() -> m_shroud.setShroud(0), m_shroud));
+		// m_shroud.setDefaultCommand(
+		// new ExecuteEndCommand(() -> m_shroud.setShroud(m_oi.getAxis(1,
+		// Constants.Axes.RIGHT_STICK_Y) * 0.3),
+		// () -> m_shroud.setShroud(0), m_shroud));
 		configureButtonBindings();
 	}
 
@@ -122,7 +123,7 @@ public class RobotContainer {
 	private int goDown() {
 		SmartDashboard.putString("DB/String 5", "GoUp: True");
 		if (shroudPos < 3) {
-			return this.shroudPos++;
+			return ++this.shroudPos;
 		} else
 			return this.shroudPos;
 	}
@@ -132,7 +133,7 @@ public class RobotContainer {
 	private int goUp() {
 		SmartDashboard.putString("DB/String 5", "GoDown: True");
 		if (shroudPos > 0) {
-			return this.shroudPos--;
+			return --this.shroudPos;
 		} else
 			return this.shroudPos;
 	}

@@ -36,6 +36,7 @@ public class ShroudSys extends SubsystemBase {
 		SmartDashboard.putNumber("P", Constants.SHROUD_KP);
 		SmartDashboard.putNumber("I", Constants.SHROUD_KI);
 		SmartDashboard.putNumber("D", 0);
+		shroud.setSelectedSensorPosition(0);
 	}
 
 	public double getDegrees() {
@@ -61,20 +62,15 @@ public class ShroudSys extends SubsystemBase {
 
 	@Override
 	public void periodic() {
-		pidOut = pid.calculate(getDegrees(), positionDesired);
+		pidOut = pid.calculate(getDegrees(), positionDesired) / 1000.0;
 
 		pid.setPID(SmartDashboard.getNumber("P", 0), SmartDashboard.getNumber("I", 0),
 				SmartDashboard.getNumber("D", 0));
 		SmartDashboard.putString("DB/String 6", "ShroudPeriodic " + getDegrees());
 		SmartDashboard.putString("DB/String 7", "Setpoint: " + pid.atSetpoint());
 		SmartDashboard.putString("DB/String 8", "PidOut: " + pidOut);
-		// if (pid.atSetpoint()) {
-		// pid.reset();
-		// shroud.set(0);
-		// }
 		shroud.set(pidOut);
-		// SmartDashboard.putNumber("PID: ", pid.calculate(getDegrees(),
-		// positionDesired));
+		// shroud.set(MathUtil.clamp(pidOut, -1.0, 1.0));
 
 	}
 }
